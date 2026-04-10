@@ -35,24 +35,26 @@ Natural language → GraphSpec → Flow view → Run → Persist → Explain
 
 ### Harness engineering
 
-GraphReFly covers the [8 requirements](https://github.com/graphrefly/graphrefly) of a production agent harness:
+GraphReFly is the **reactive harness layer for agent workflows**. The eight requirements of a production agent harness don't map one-to-one with eight APIs — they cluster into a handful of composed blocks that sit on top of the reactive graph primitives:
 
-| Requirement | How |
+| Need | GraphReFly |
 |---|---|
-| Context & state | `autoCheckpoint`, `snapshot/restore`, `distill()`, `agentMemory()` |
-| Execution boundary | Actor/Guard ABAC, `policy()`, `budgetGate` |
-| Control flow | `retry`, `backoff`, `withBreaker`, `pipeline()` |
-| Observability | `describe()`, `observe()`, `annotate()`, `traceLog()`, `toMermaid()` |
-| Policy & safety | ABAC, `policyFromRules()`, scoped describe |
-| Verification | Eval harness with multi-model matrix, regression gates |
-| Human governance | Reactive `gate` with `approve` / `reject` / `modify` |
+| Context & state | `persistentState()` — `autoCheckpoint` + `snapshot` / `restore` + incremental diff |
+| Agent memory | `agentMemory()` — `distill` + vectors + knowledge graph + tiers, with OpenViking decay |
+| Control flow & resilience | `resilientPipeline()` — encodes the correct `rateLimiter → breaker → retry → timeout → fallback` ordering |
+| Execution & policy | `guardedExecution()` — Actor / Guard ABAC + `policy()` + `budgetGate` + scoped describe |
+| Observability & causality | `graphLens()` — reactive topology, health, flow, and `why(node)` causal chains as structured data |
+| Human governance | `gate` — reactive `pending` / `isOpen` with `approve` / `reject` / `modify(fn, n)` |
+| Verification | Multi-model eval harness with regression gates |
 | Continuous improvement | Strategy model: `rootCause × intervention → successRate` |
+
+The library computes structured facts reactively; LLMs and UIs render them. Natural language is never the library's job — which is what keeps the whole stack model-agnostic and testable.
 
 ### Repositories
 
 | Repo | Description |
 |---|---|
-| [graphrefly](https://github.com/graphrefly/graphrefly) | Behavior spec (`GRAPHREFLY-SPEC.md`), composition guide, design docs |
+| [graphrefly](https://github.com/graphrefly/graphrefly) | Behavior spec (`GRAPHREFLY-SPEC.md`) and composition guide |
 | [graphrefly-ts](https://github.com/graphrefly/graphrefly-ts) | TypeScript implementation — `@graphrefly/graphrefly-ts` on npm |
 | [graphrefly-py](https://github.com/graphrefly/graphrefly-py) | Python implementation (parity track) |
 
