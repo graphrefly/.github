@@ -40,11 +40,11 @@ Six composed blocks sit on top of the reactive primitives. Each is a single impo
 | Block | What it does | What's inside |
 |---|---|---|
 | **`agentMemory()`** | Memory that learns and forgets | `distill` + vectors + knowledge graph + decay + tiers + context tree |
-| **`harnessLoop()`** | Self-improving agent loop | intake → triage → gate → execute → verify → reflect + handoff routing + strategy model + auto-solidify |
+| **`harnessLoop()`** | Self-improving agent loop | intake → triage → gate → execute → verify → reflect + handoff routing + strategy model |
 | **`guardedExecution()`** | Policy, safety, and tool control | ABAC + `policy()` + `budgetGate` + `valve` + `gate` + dynamic tool selection + parallel guardrails |
 | **`resilientPipeline()`** | Never-crash LLM calls | `rateLimiter` → `breaker` → `retry` → `timeout` → `fallback` (correct nesting order) |
 | **`graphLens()`** | Observability and causality | Reactive topology + health + flow + `why(node)` causal chains + audit trail |
-| **`persistentState()`** | Resume where you left off | `autoCheckpoint` + `snapshot` / `restore` + incremental diff |
+| **`Graph.attachStorage()`** | Resume where you left off | `autoCheckpoint` + `snapshot` / `restore` + incremental diff + multi-tier storage |
 
 **The learning loop** — what makes this different from static frameworks:
 
