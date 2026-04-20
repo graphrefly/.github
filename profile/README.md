@@ -33,22 +33,30 @@ Natural language → GraphSpec → Flow view → Run → Persist → Explain
 - **`autoCheckpoint` + `snapshot/restore`** — close the app, reopen, resume exactly where you left off
 - **Actor/Guard ABAC** — per-node access control for multi-tenant and multi-agent scenarios
 
-### Harness engineering
+### Building blocks
 
-GraphReFly is the **reactive harness layer for agent workflows**. The eight requirements of a production agent harness don't map one-to-one with eight APIs — they cluster into a handful of composed blocks that sit on top of the reactive graph primitives:
+Six composed blocks sit on top of the reactive primitives. Each is a single import with sensible defaults — you don't need to memorize the lower-level graph API to use them:
 
-| Need | GraphReFly |
-|---|---|
-| Context & state | `persistentState()` — `autoCheckpoint` + `snapshot` / `restore` + incremental diff |
-| Agent memory | `agentMemory()` — `distill` + vectors + knowledge graph + tiers, with OpenViking decay |
-| Control flow & resilience | `resilientPipeline()` — encodes the correct `rateLimiter → breaker → retry → timeout → fallback` ordering |
-| Execution & policy | `guardedExecution()` — Actor / Guard ABAC + `policy()` + `budgetGate` + scoped describe |
-| Observability & causality | `graphLens()` — reactive topology, health, flow, and `why(node)` causal chains as structured data |
-| Human governance | `gate` — reactive `pending` / `isOpen` with `approve` / `reject` / `modify(fn, n)` |
-| Verification | Multi-model eval harness with regression gates |
-| Continuous improvement | Strategy model: `rootCause × intervention → successRate` |
+| Block | What it does | What's inside |
+|---|---|---|
+| **`agentMemory()`** | Memory that learns and forgets | `distill` + vectors + knowledge graph + decay + tiers + context tree |
+| **`harnessLoop()`** | Self-improving agent loop | intake → triage → gate → execute → verify → reflect + handoff routing + strategy model + auto-solidify |
+| **`guardedExecution()`** | Policy, safety, and tool control | ABAC + `policy()` + `budgetGate` + `valve` + `gate` + dynamic tool selection + parallel guardrails |
+| **`resilientPipeline()`** | Never-crash LLM calls | `rateLimiter` → `breaker` → `retry` → `timeout` → `fallback` (correct nesting order) |
+| **`graphLens()`** | Observability and causality | Reactive topology + health + flow + `why(node)` causal chains + audit trail |
+| **`persistentState()`** | Resume where you left off | `autoCheckpoint` + `snapshot` / `restore` + incremental diff |
 
-The library computes structured facts reactively; LLMs and UIs render them. Natural language is never the library's job — which is what keeps the whole stack model-agnostic and testable.
+**The learning loop** — what makes this different from static frameworks:
+
+```
+execute → verify → reflect → triage (better routing next time)
+    ↑                              │
+    └──────────────────────────────┘
+```
+
+Every success strengthens future routing (strategy model). Every failure narrows the search space. The graph evolves — not just the prompts.
+
+The library computes structured facts reactively; LLMs and UIs render them. Natural language is never the library's job — model-agnostic and testable.
 
 ### Repositories
 
